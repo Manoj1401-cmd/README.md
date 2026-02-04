@@ -1,45 +1,21 @@
-import pandas as pd
+Part - B
+1. PnL: Traders tend to show higher average PnL on Greed days, but with greater variance (larger wins and losses). On Fear days, PnL is lower but more stable.
+Win Rate: Win rates are slightly higher on Greed days, suggesting traders take more aggressive positions that pay off more often.
+Drawdown Proxy: Deeper drawdowns occur on Greed days, reflecting higher risk exposure.
+2. Trade Frequency: Traders increase the number of trades on Greed days, showing more activity when sentiment is positive.
+ Leverage: Average leverage is higher on Greed days, indicating riskier positioning.
+ Long/Short Bias: Long positions dominate on Greed days, while Fear days show a more balanced or short‑leaning bias.
+ Position Sizes: Larger average trade sizes are observed on Greed days.
+3. High vs Low Leverage Traders: High‑leverage traders show extreme outcomes (big wins and big losses), while low‑leverage traders remain more consistent.
+ Frequent vs Infrequent Traders: Frequent traders react more strongly to sentiment shifts, increasing activity on Greed days. Infrequent traders show little change.
+  Consistent vs Inconsistent Winners: Consistent winners maintain positive PnL across both Fear and Greed days. Inconsistent traders swing more dramatically, often losing on Fear days.
+4.- Greed days boost average PnL and win rate but increase drawdowns.
+- Traders take on more risk (higher leverage, more trades, larger positions) when sentiment is Greedy.
+- Segmentation shows risk profiles: high‑leverage and frequent traders are most sensitive to sentiment, while consistent winners remain stable across conditions.
 
 
-fear_greed = pd.read_csv("fear_greed_index.csv")
-historical = pd.read_csv("historical_data.csv")
-print("Fear & Greed shape:", fear_greed.shape)
-print("Historical shape:", historical.shape)
-
-print("Missing values Fear & Greed:\n", fear_greed.isnull().sum())
-print("Missing values Historical:\n", historical.isnull().sum())
-
-print("Duplicates Fear & Greed:", fear_greed.duplicated().sum())
-print("Duplicates Historical:", historical.duplicated().sum())
 
 
-fear_greed['timestamp'] = pd.to_datetime(fear_greed['timestamp'])
-historical['Timestamp'] = pd.to_datetime(historical['Timestamp'])
-
-
-fear_greed['date'] = fear_greed['timestamp'].dt.date
-historical['date'] = historical['Timestamp'].dt.date
-
-merged = pd.merge(historical, fear_greed, on='date', how='inner')
-
-daily_pnl = merged.groupby(['date','trader_id'])['PnL'].sum().reset_index()
-
-win_rate = merged.groupby('trader_id').apply(lambda x: (x['PnL']>0).mean()).reset_index(name='win_rate')
-
-avg_trade_size = merged.groupby('trader_id')['trade_size'].mean().reset_index()
-
-leverage_dist = merged['leverage'].describe()
-
-trades_per_day = merged.groupby('date')['trade_size'].count().reset_index(name='num_trades')
-
-long_short_ratio = merged['side'].value_counts(normalize=True)
-
-print(daily_pnl.head())
-print(win_rate.head())
-print(avg_trade_size.head())
-print(leverage_dist)
-print(trades_per_day.head())
-print(long_short_ratio)
 
 
 
